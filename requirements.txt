@@ -1,0 +1,12 @@
+bs4
+datetime
+google-search-results
+googlemaps
+lxml
+nsfsearch
+pypatent
+scholarly
+selenium
+requests
+bs4
+uspto-opendata-python
