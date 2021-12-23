@@ -16,11 +16,13 @@ def chart_trials():
 
     """
 
-    tasks = [1, 2]
+    tasks = [2]
 
     # collect metadata for each clinical trial
     if 1 in tasks: collect_metadata_clinical()
     if 2 in tasks: refine_trials()
+
+
 
 
 def refine_trials():
@@ -112,11 +114,11 @@ def collect_metadata_clinical():
     df_allTerms = pd.DataFrame()
 
     search_terms = []
-    search_terms.append('iPSC')
-    search_terms.append('GeneticEngineering')
     search_terms.append('MesenchymalExosome')
+    search_terms.append('GeneticEngineering')
     search_terms.append('MesenchymalAllogenic')
     search_terms.append('MesenchymalAutologous')
+    search_terms.append('iPSC')
     search_terms.append('Mesenchymal')
 
     for term in search_terms:
@@ -144,16 +146,11 @@ def collect_metadata_clinical():
             df = df[1:]
             df.columns = new_header
 
-            """
             df['Brief_summary'] = linebreak_removal(df['Brief_summary'])
             df['Detailed_description'] = linebreak_removal(df['Detailed_description'])
             df['Eligibility'] = linebreak_removal(df['Eligibility'])
             df['Primary_outcome'] = linebreak_removal(df['Primary_outcome'])
             df['Arm_group'] = linebreak_removal(df['Arm_group'])
-            df['title'] = list(df['Official_title'])
-            df['status'] = list(df['Overall_status'])
-            # df['date'] = list(df['Start_date'])
-            """
 
             df['source'] = ['https://clinicaltrials.gov/']
             df['searchTerm'] = [term]
@@ -161,8 +158,8 @@ def collect_metadata_clinical():
             df['url'] = [url]
             df['urlXML'] = [urlXML]
 
+            df['title'] = list(df['Official_title'])
 
-            """
             if '@' in str(list(df['Overall_official'])[0]):
                 df['contact'] = list(df['Overall_official'])
             elif '@' in str(list(df['Overall_contact'])[0]):
@@ -177,9 +174,11 @@ def collect_metadata_clinical():
                 df['contact'] = list(df['Overall_contact_backup'])
             else:
                 df['contact'] = [' ']
-            """
 
 
+
+            df['status'] = list(df['Overall_status'])
+            # df['date'] = list(df['Start_date'])
 
             df_all = df_all.append(df)
             print(df_all)
@@ -223,8 +222,7 @@ def clinicalTrialsGov (nctid):
 
     # tag_dict = {'' + current_tag.name.capitalize(): current_tag.text for current_tag in tag_matches}
 
-    for sub in subset:
-        tag_dict = multipleFields(data, sub, tag_dict)
+    for sub in subset: tag_dict = multipleFields(data, sub, tag_dict)
 
     # return removeEmptyKeys(tag_dict)
     return tag_dict
@@ -241,35 +239,18 @@ def multipleFields (data, subset, tagDict):
     tagDict['' + subset.capitalize()] = ", ".join(field)
     return tagDict
 
-
-
 def removeEmptyKeys (dict1):
     newDict = {k:v for (k, v) in dict1.items() if v}
     return newDict
 
 
-
-
 def define_subset():
     """
-    Use the study structure to identify the names of each field
-    # https://clinicaltrials.gov/api/info/study_structure
+
     """
 
     subset = []
     subset.append('study_type')
-
-    fileName = os.path.join( 'data', 'ref', 'studyFields.txt')
-    with open(fileName, 'r') as f:
-        for line in f:
-            if '="' in line:
-                target = line.split('="')
-                target = target[1]
-                if '"' in target:
-                    target = target.split('"')
-                    target = target[0]
-                    subset.append(target)
-
     subset.append('brief_title')
     subset.append('official_title')
 
@@ -370,10 +351,5 @@ def define_subset():
     subsubset.append('has_dmc')
     subsubset.append('biospec_retention')
     subsubset.append('biospec_descr')
-
-    subsubset = subset
-
-    # print('subset = ')
-    # print(subset)
 
     return (subset, subsubset)
