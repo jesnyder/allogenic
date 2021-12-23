@@ -1,0 +1,5 @@
+description,path
+search_terms_nih_clinical_trials,user_provided metadata search_terms.csv
+trials,program_generated trials mesenchymal.json
+trials_path,program_generated trials
+trial_count,program_generated trials counts.csv
